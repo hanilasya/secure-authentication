@@ -1,0 +1,23 @@
+[
+  {
+    "id": "usr_1789018607914_1ihfgj8",
+    "name": "Hansika",
+    "email": "hansikaammu03@gmail.com",
+    "passwordHash": "$2a$10$F0f2NI5SjW7LRjaYt/SrXeWKBlthQXezL54dax1jhrZhNE8WqoTke",
+    "createdAt": "2026-09-10T05:36:47.914Z"
+  },
+  {
+    "id": "usr_1789021124243_zj03znm",
+    "name": "Hansika Test",
+    "email": "student_1789021124160@cyberlab.edu",
+    "passwordHash": "$2a$10$3dlkb8sfhNdR7v034Z0VLuFHJYWPMPfkuYpDiaZWBtX25BbASbSh.",
+    "createdAt": "2026-09-10T06:18:44.243Z"
+  },
+  {
+    "id": "usr_1789021215684_be5vjrj",
+    "name": "Hansika Test",
+    "email": "student_1789021215619@cyberlab.edu",
+    "passwordHash": "$2a$10$9A5d..afqzCNWPrOojtM6OTBuiXeq/5CSSpZ41It0dB/zjLCN.RCS",
+    "createdAt": "2026-09-10T06:20:15.684Z"
+  }
+]

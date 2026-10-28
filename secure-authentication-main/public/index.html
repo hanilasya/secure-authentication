@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SecureAuth - Professional Cybersecurity Authentication Toolkit demonstrating bcrypt password hashing, session security, rate limiting, and defensive controls.">
+    <title>SECUREAUTH :: TOOLKIT — Cybersecurity</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Full-Width Top Header -->
+    <header class="toolkit-header">
+        <div class="header-brand">
+            <div class="brand-badge">SA</div>
+            <div class="brand-info">
+                <div class="brand-title">
+                    SECUREAUTH <span class="accent">::</span> TOOLKIT
+                </div>
+                <div class="brand-subtitle">
+                    Secure Authentication Toolkit — Cybersecurity
+                </div>
+            </div>
+        </div>
+
+        <div class="header-telemetry">
+            <div class="telemetry-item">
+                <span class="telemetry-label">SESSION</span>
+                <span class="telemetry-val" id="headerSessionId">INIT-0000</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="telemetry-label">STATUS</span>
+                <div class="status-indicator">
+                    <span>ONLINE</span>
+                    <span class="status-dot"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Toolkit Layout (Sidebar + Module Views) -->
+    <div class="toolkit-layout">
+        
+        <!-- Left Sidebar Navigation -->
+        <aside class="toolkit-sidebar">
+            <div>
+                <div class="sidebar-section-label">SYSTEM MODULES</div>
+                <nav class="sidebar-nav">
+                    <button type="button" class="nav-module-btn active" id="navModule01" data-target="module01">
+                        <span><span class="module-num">01 ·</span> PASSWORD STRENGTH</span>
+                        <span class="module-badge-state">ANALYZE</span>
+                    </button>
+                    <button type="button" class="nav-module-btn" id="navModule02" data-target="module02">
+                        <span><span class="module-num">02 ·</span> REGISTER</span>
+                        <span class="module-badge-state">PROVISION</span>
+                    </button>
+                    <button type="button" class="nav-module-btn" id="navModule03" data-target="module03">
+                        <span><span class="module-num">03 ·</span> LOGIN</span>
+                        <span class="module-badge-state">VERIFY</span>
+                    </button>
+                    <button type="button" class="nav-module-btn" id="navModule04" data-target="module04">
+                        <span><span class="module-num">04 ·</span> SESSION SECURITY</span>
+                        <span class="module-badge-state" id="sidebarSessionStateBadge">GUEST</span>
+                    </button>
+                    <button type="button" class="nav-module-btn" id="navModule05" data-target="module05">
+                        <span><span class="module-num">05 ·</span> SECURITY DASHBOARD</span>
+                        <span class="module-badge-state">DEFENSE</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Sidebar Telemetry & User Status -->
+            <div class="sidebar-footer">
+                <div class="sidebar-telemetry-box">
+                    <div class="telemetry-row">
+                        <span class="telemetry-key">ENGINE:</span>
+                        <span class="telemetry-value">Node.js / Express</span>
+                    </div>
+                    <div class="telemetry-row">
+                        <span class="telemetry-key">HASH:</span>
+                        <span class="telemetry-value active">Bcrypt (10 Rounds)</span>
+                    </div>
+                    <div class="telemetry-row">
+                        <span class="telemetry-key">COOKIE:</span>
+                        <span class="telemetry-value active">HttpOnly + Lax</span>
+                    </div>
+                    <div class="telemetry-row">
+                        <span class="telemetry-key">BRUTE DEFENSE:</span>
+                        <span class="telemetry-value active">Rate Limited</span>
+                    </div>
+                </div>
+
+                <!-- Active Authenticated User Banner in Sidebar -->
+                <div class="sidebar-user-card" id="sidebarUserCard">
+                    <div class="sidebar-user-name" id="sidebarUserName">Hansika</div>
+                    <div class="sidebar-user-email" id="sidebarUserEmail">user@secureauth.io</div>
+                    <button type="button" class="btn-sidebar-logout" id="sidebarLogoutBtn">
+                        Sign Out [Terminate Session]
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area: Module Views -->
+        <main class="toolkit-main">
+
+            <!-- ====================================================================
+                 MODULE 01: PASSWORD STRENGTH ANALYZER
+                 ==================================================================== -->
+            <section class="module-panel active" id="module01">
+                <div class="module-header">
+                    <div>
+                        <div class="module-tag">[MODULE 01] // CRYPTOGRAPHIC ANALYSIS</div>
+                        <h1 class="module-title">PASSWORD STRENGTH ANALYZER</h1>
+                        <p class="module-desc">Real-time entropy evaluation, brute-force complexity metrics, and pattern detection matrix.</p>
+                    </div>
+                </div>
+
+                <div class="strength-hero-box">
+                    <div class="form-group">
+                        <label for="analyzerPassword" class="form-label">
+                            <span>ENTER PASSWORD</span>
+                            <span style="color: var(--text-muted);">LIVE TELEMETRY ACTIVE</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                id="analyzerPassword" 
+                                class="form-input" 
+                                placeholder="Type or paste a candidate password to inspect..." 
+                                autocomplete="off"
+                                spellcheck="false"
+                            >
+                            <button type="button" class="input-btn-addon" id="analyzerToggleBtn" title="Toggle Visibility">SHOW</button>
+                        </div>
+                    </div>
+
+                    <!-- Live Strength Gauge -->
+                    <div class="strength-header-bar">
+                        <span class="strength-label">STRENGTH:</span>
+                        <span class="strength-status-badge" id="analyzerStatusBadge">NONE</span>
+                    </div>
+                    <div class="strength-meter-track">
+                        <div class="strength-meter-bar" id="analyzerMeterBar"></div>
+                    </div>
+
+                    <!-- 8 Real-time Security Checks Required -->
+                    <div class="checks-matrix">
+                        <div class="check-item" id="chkLength8">
+                            <span class="check-icon">✕</span>
+                            <span>At least 8 characters</span>
+                        </div>
+                        <div class="check-item" id="chkLength12">
+                            <span class="check-icon">✕</span>
+                            <span>At least 12 characters</span>
+                        </div>
+                        <div class="check-item" id="chkUpper">
+                            <span class="check-icon">✕</span>
+                            <span>Contains uppercase letter</span>
+                        </div>
+                        <div class="check-item" id="chkLower">
+                            <span class="check-icon">✕</span>
+                            <span>Contains lowercase letter</span>
+                        </div>
+                        <div class="check-item" id="chkNumber">
+                            <span class="check-icon">✕</span>
+                            <span>Contains number</span>
+                        </div>
+                        <div class="check-item" id="chkSpecial">
+                            <span class="check-icon">✕</span>
+                            <span>Contains special character</span>
+                        </div>
+                        <div class="check-item" id="chkCommon">
+                            <span class="check-icon">✕</span>
+                            <span>Not a common password</span>
+                        </div>
+                        <div class="check-item" id="chkRepeats">
+                            <span class="check-icon">✕</span>
+                            <span>No obvious repeated characters</span>
+                        </div>
+                    </div>
+
+                    <!-- Telemetry Stats -->
+                    <div class="telemetry-grid">
+                        <div class="telemetry-stat-card">
+                            <div class="stat-label">Length</div>
+                            <div class="stat-val" id="statLength">0 chars</div>
+                            <div class="stat-desc">Total key bytes</div>
+                        </div>
+                        <div class="telemetry-stat-card">
+                            <div class="stat-label">Entropy</div>
+                            <div class="stat-val" id="statEntropy">0 bits</div>
+                            <div class="stat-desc">Shannon entropy</div>
+                        </div>
+                        <div class="telemetry-stat-card">
+                            <div class="stat-label">Charset Diversity</div>
+                            <div class="stat-val" id="statCharset">0 / 4</div>
+                            <div class="stat-desc">Pool variety</div>
+                        </div>
+                        <div class="telemetry-stat-card">
+                            <div class="stat-label">Crack Resistance</div>
+                            <div class="stat-val green" id="statCrackTime">Instant</div>
+                            <div class="stat-desc">Offline bruteforce</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-notice-box">
+                    <strong>Bcrypt Salt Derivation:</strong> In our architecture, even complex passwords undergo bcrypt salting with 10 cryptographic cost rounds ($2^{10} = 1,024$ key derivations) to defeat dictionary and rainbow-table attacks.
+                </div>
+            </section>
+
+            <!-- ====================================================================
+                 MODULE 02: REGISTER IDENTITY
+                 ==================================================================== -->
+            <section class="module-panel" id="module02">
+                <div class="module-header">
+                    <div>
+                        <div class="module-tag">[MODULE 02] // PROVISIONING &amp; BCRYPT HASHING</div>
+                        <h1 class="module-title">USER IDENTITY REGISTRATION</h1>
+                        <p class="module-desc">Register a secure identity with server-side bcrypt (10 rounds) salting &amp; input sanitization.</p>
+                    </div>
+                </div>
+
+                <div class="auth-form-card">
+                    <div class="form-notice-box">
+                        <strong>Security Policy:</strong> Passwords are salt-hashed on the server with bcrypt. Plain-text passwords are never persisted to disk or emitted in logs.
+                    </div>
+
+                    <div id="registerAlertBox" class="cyber-alert"></div>
+
+                    <form id="toolkitRegisterForm" autocomplete="off">
+                        <div class="form-group">
+                            <label for="regName" class="form-label">Full Name</label>
+                            <input 
+                                type="text" 
+                                id="regName" 
+                                class="form-input" 
+                                placeholder="e.g. Hansika Sharma" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regEmail" class="form-label">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="regEmail" 
+                                class="form-input" 
+                                placeholder="e.g. hansika@university.edu" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regPassword" class="form-label">Password</label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="password" 
+                                    id="regPassword" 
+                                    class="form-input" 
+                                    placeholder="Enter complex password..." 
+                                    required
+                                >
+                                <button type="button" class="input-btn-addon toggle-pass-btn" data-target="regPassword">SHOW</button>
+                            </div>
+
+                            <!-- Live Password Strength Meter in Register -->
+                            <div class="reg-meter-box">
+                                <div class="reg-meter-header">
+                                    <span>Password Strength:</span>
+                                    <span id="regMeterStatus" style="font-weight: 700;">None</span>
+                                </div>
+                                <div class="reg-meter-track">
+                                    <div id="regMeterBar" class="reg-meter-bar"></div>
+                                </div>
+                                <div class="reg-req-grid">
+                                    <div class="reg-req-item" id="regReqLen"><span>•</span> 8+ Characters</div>
+                                    <div class="reg-req-item" id="regReqUpper"><span>•</span> Uppercase (A-Z)</div>
+                                    <div class="reg-req-item" id="regReqLower"><span>•</span> Lowercase (a-z)</div>
+                                    <div class="reg-req-item" id="regReqNum"><span>•</span> Number (0-9)</div>
+                                    <div class="reg-req-item" id="regReqSpec" style="grid-column: span 2;"><span>•</span> Special Character (!@#$%^&*)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regConfirmPassword" class="form-label">
+                                <span>Confirm Password</span>
+                                <span id="regMatchStatus" style="font-size: 0.72rem; color: var(--text-muted);"></span>
+                            </label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="password" 
+                                    id="regConfirmPassword" 
+                                    class="form-input" 
+                                    placeholder="Repeat password to verify..." 
+                                    required
+                                >
+                                <button type="button" class="input-btn-addon toggle-pass-btn" data-target="regConfirmPassword">SHOW</button>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btnRegisterSubmit" class="btn-cyber-primary" style="margin-top: 1rem;">
+                            Initialize &amp; Hash User Credentials
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ====================================================================
+                 MODULE 03: LOGIN & AUTHENTICATION
+                 ==================================================================== -->
+            <section class="module-panel" id="module03">
+                <div class="module-header">
+                    <div>
+                        <div class="module-tag">[MODULE 03] // AUTHENTICATION &amp; VERIFICATION</div>
+                        <h1 class="module-title">SECURE AUTHENTICATION LOGIN</h1>
+                        <p class="module-desc">Constant-time bcrypt verification &amp; stateful express-session establishment.</p>
+                    </div>
+                </div>
+
+                <div class="auth-form-card">
+                    <div class="form-notice-box">
+                        <strong>Brute-Force Rate Limiting Active:</strong> Client IP and email combinations are monitored. Exceeding 5 failed attempts triggers an automated 15-minute lockout.
+                    </div>
+
+                    <div id="loginAlertBox" class="cyber-alert"></div>
+
+                    <form id="toolkitLoginForm" autocomplete="off">
+                        <div class="form-group">
+                            <label for="loginEmail" class="form-label">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="loginEmail" 
+                                class="form-input" 
+                                placeholder="Enter registered email..." 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="password" 
+                                    id="loginPassword" 
+                                    class="form-input" 
+                                    placeholder="Enter your password..." 
+                                    required
+                                >
+                                <button type="button" class="input-btn-addon toggle-pass-btn" data-target="loginPassword">SHOW</button>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btnLoginSubmit" class="btn-cyber-primary" style="margin-top: 1rem;">
+                            Authenticate &amp; Establish Session
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ====================================================================
+                 MODULE 04: SESSION SECURITY TELEMETRY
+                 ==================================================================== -->
+            <section class="module-panel" id="module04">
+                <div class="module-header">
+                    <div>
+                        <div class="module-tag">[MODULE 04] // SESSION TELEMETRY &amp; COOKIES</div>
+                        <h1 class="module-title">SESSION SECURITY INSPECTOR</h1>
+                        <p class="module-desc">Live examination of server-side session state, cookie protection flags, and identity safeguards.</p>
+                    </div>
+                </div>
+
+                <!-- Session Status Banner -->
+                <div class="session-status-banner">
+                    <div class="session-status-info">
+                        <div>
+                            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Current Session State</div>
+                            <div style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.3rem;">
+                                <span class="session-badge-large" id="sessionStatusBadge">UNAUTHENTICATED</span>
+                                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary);" id="sessionUserGreeting">Guest Session (No active login)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.6rem;">
+                        <button type="button" class="btn-cyber-outline" id="btnRefreshSession">
+                            Verify Session [GET /api/me]
+                        </button>
+                        <button type="button" class="btn-cyber-danger" id="btnSessionLogout" style="display: none;">
+                            Terminate Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Session Details Matrix -->
+                <div class="session-details-matrix">
+                    <div class="session-detail-card">
+                        <div class="session-detail-title">SESSION STATUS</div>
+                        <div class="session-detail-val" id="sessDetailStatus">UNAUTHENTICATED</div>
+                        <div class="session-detail-sub">Server memory state verification</div>
+                    </div>
+
+                    <div class="session-detail-card">
+                        <div class="session-detail-title">SESSION ID</div>
+                        <div class="session-detail-val" id="sessDetailId">NONE</div>
+                        <div class="session-detail-sub">Cryptographic express-session identifier</div>
+                    </div>
+
+                    <div class="session-detail-card">
+                        <div class="session-detail-title">AUTHENTICATION</div>
+                        <div class="session-detail-val" id="sessDetailAuth">UNVERIFIED</div>
+                        <div class="session-detail-sub">Stateful credentials handshake</div>
+                    </div>
+
+                    <div class="session-detail-card">
+                        <div class="session-detail-title">COOKIE PROTECTION</div>
+                        <div class="session-detail-val green">HTTP-ONLY (true) &bull; SAME-SITE (Lax)</div>
+                        <div class="session-detail-sub">Mitigates XSS cookie theft and CSRF attacks</div>
+                    </div>
+
+                    <div class="session-detail-card">
+                        <div class="session-detail-title">PASSWORD STORAGE PRINCIPLE</div>
+                        <div class="session-detail-val green">BCRYPT HASHED (10 Rounds)</div>
+                        <div class="session-detail-sub">Zero plaintext exposure in backend &amp; response</div>
+                    </div>
+
+                    <div class="session-detail-card">
+                        <div class="session-detail-title">ACTIVE USER IDENTITY</div>
+                        <div class="session-detail-val orange" id="sessDetailUser">N/A</div>
+                        <div class="session-detail-sub" id="sessDetailUserEmail">Sign in via Module 03 to populate identity</div>
+                    </div>
+                </div>
+
+                <div class="zero-knowledge-notice">
+                    <strong>CYBERSECURITY PRINCIPLE // ZERO PLAINTEXT EXPOSURE:</strong><br>
+                    Passwords and password hash salts are never transmitted to the browser in API payloads or rendered in DOM elements. User sessions are verified via cryptographically signed <code>connect.sid</code> cookies stored with <code>HttpOnly</code> flags to prevent client-side JavaScript extraction.
+                </div>
+            </section>
+
+            <!-- ====================================================================
+                 MODULE 05: SECURITY DASHBOARD
+                 ==================================================================== -->
+            <section class="module-panel" id="module05">
+                <div class="module-header">
+                    <div>
+                        <div class="module-tag">[MODULE 05] // DEFENSE MATRIX &amp; AUDIT</div>
+                        <h1 class="module-title">CYBERSECURITY ARCHITECTURE DASHBOARD</h1>
+                        <p class="module-desc">Real-time status overview of the 8 defensive security controls protecting this application.</p>
+                    </div>
+                </div>
+
+                <!-- 8 Defensive Controls Grid -->
+                <div class="controls-grid">
+                    
+                    <!-- Control 1 -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <div class="control-name">
+                                <span style="color: var(--status-green);">✓</span> 1. Bcrypt Password Hashing
+                            </div>
+                            <span class="control-badge">ACTIVE</span>
+                        </div>
+                        <div class="control-body">
+                            Cryptographically hashes passwords with 10 salt rounds before persistence. Plain-text passwords are never written to disk.
+                        </div>
+                        <div class="control-code-snippet">
+                            bcrypt.hash(password, 10) &rarr; $2a$10$...
+                        </div>
+                    </div>
+
+                    <!-- Control 2 -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <div class="control-name">
+                                <span style="color: var(--status-green);">✓</span> 2. Session Authentication
+                            </div>
+                            <span class="control-badge">ACTIVE</span>
+                        </div>
+                        <div class="control-body">
+                            Stateful user sessions managed via <code>express-session</code> with cryptographically signed cookies and server-side invalidation.
+                        </div>
+                        <div class="control-code-snippet">
+                            Set-Cookie: connect.sid=...; HttpOnly; SameSite=Lax
+                        </div>
+                    </div>
+
+                    <!-- Control 3 -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <div class="control-name">
+                                <span style="color: var(--status-green);">✓</span> 3. Input Validation
+                            </div>
+                            <span class="control-badge">ACTIVE</span>
+                        </div>
+                        <div class="control-body">
+                            Defense-in-depth policy testing email regex format, password character matrices, and string length boundaries.
+                        </div>
+                        <div class="control-code-snippet">
+                            Regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                        </div>
+                    </div>
+
+                    <!-- Control 4 -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <div class="control-name">
+                                <span style="color: var(--status-green);">✓</span> 4. Duplicate Account Prevention
+                            </div>
+                            <span class="control-badge">ACTIVE</span>
+                        </div>
+                        <div class="control-body">
+                            Atomic uniqueness verification checks prevent duplicate identity creation and user record collisions (HTTP 409).
+                        </div>
+                        <div class="control-code-snippet">
+                            users.find(u =&gt; u.email === trimmedEmail)
+                        </div>
+                    </div>
+
+                    <!-- Control 5 -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <div class="control-name">
+                                <span style="color: var(--status-green);">✓</span> 5. Login Protection (Rate Limiting)
+                            </div>
+                            <span class="control-badge">ACTIVE</span>
+                        </div>
+                        <div class="control-body">
+                            In-memory brute-force defense tracking failed attempts per IP/account with automated 15-minute lockouts (HTTP 429).
+                        </div>
+                        <div class="control-code-snippet">
+                            Max 5 attempts / 15-min sliding lockout window
+                        </div>
+                    </div>
+
+                    <!-- Control 6 -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <div class="control-name">
+                                <span style="color: var(--status-green);">✓</span> 6. Protected Routes
+                            </div>
+                            <span class="control-badge">ACTIVE</span>
+                        </div>
+                        <div class="control-body">
+                            Server-side <code>requireAuth</code> middleware intercepts unauthorized API calls, returning HTTP 401 Unauthorized.
+                        </div>
+                        <div class="control-code-snippet">
+                            if (!req.session.user) return res.status(401)
+                        </div>
+                    </div>
+
+                    <!-- Control 7 -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <div class="control-name">
+                                <span style="color: var(--status-green);">✓</span> 7. Secure Logout
+                            </div>
+                            <span class="control-badge">ACTIVE</span>
+                        </div>
+                        <div class="control-body">
+                            Server destroys user session store data (`req.session.destroy`) and requests the client browser to clear session cookies.
+                        </div>
+                        <div class="control-code-snippet">
+                            res.clearCookie('connect.sid'); req.session.destroy()
+                        </div>
+                    </div>
+
+                    <!-- Control 8 -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <div class="control-name">
+                                <span style="color: var(--status-green);">✓</span> 8. HTTP Defense Headers
+                            </div>
+                            <span class="control-badge">ACTIVE</span>
+                        </div>
+                        <div class="control-body">
+                            Enforces defensive headers: <code>X-Content-Type-Options: nosniff</code>, <code>X-Frame-Options: DENY</code>, and XSS filters.
+                        </div>
+                        <div class="control-code-snippet">
+                            X-Frame-Options: DENY &bull; nosniff &bull; strict-origin
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Live Client Audit Log Console -->
+                <div class="audit-console-box">
+                    <div class="audit-console-header">
+                        <span>SECURITY AUDIT STREAM &bull; LIVE TELEMETRY</span>
+                        <span id="auditTimestamp">UPTIME: 100%</span>
+                    </div>
+                    <div class="audit-logs" id="auditLogsContainer">
+                        <div class="audit-line">
+                            <span class="audit-ts">[00:00:00]</span>
+                            <span class="audit-tag green">[CORE_INIT]</span>
+                            <span class="audit-msg">SecureAuth Cybersecurity Toolkit subsystem initialized.</span>
+                        </div>
+                        <div class="audit-line">
+                            <span class="audit-ts">[00:00:01]</span>
+                            <span class="audit-tag">[CRYPTO]</span>
+                            <span class="audit-msg">Bcrypt salt engine ready (Cost factor 10, constant-time compare).</span>
+                        </div>
+                        <div class="audit-line">
+                            <span class="audit-ts">[00:00:02]</span>
+                            <span class="audit-tag">[DEFENSE]</span>
+                            <span class="audit-msg">Rate limiter and session interceptors active.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
